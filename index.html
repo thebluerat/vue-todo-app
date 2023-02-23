@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Todo</title>
+</head>
+<body>
+    <div id="app">
+        <h1>Todo App</h1>
+        <input type="text" 
+        v-model="inputText"
+        v-on:keyup.enter="addItem"> 
+        <!-- 엔터 키로 addItem 실행 (event modifier) -->
+        <button v-on:click="addItem"
+        >add</button>
+        <div>
+            <ul>
+                <li v-for="(todoItem, index) in todoItems">
+                    {{ todoItem }}
+                    <button v-on:click="removeItem(todoItem, index)">remove</button>
+                    <!-- () 안에 텍스트랑 인덱스 인자로 넘김 -->
+                </li>
+                <!-- 리스트 형식으로 데이터 표현 -->
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        new Vue({
+            created: function() {
+                this.fetchItems();
+                // 처음부터 리스트가 화면에 보이게 함
+            },
+            methods: {
+                addItem: function(event){
+                    // if (event.keyCode === 13) {
+                        // console.log(event);
+                        // 엔터 키 번호 13
+                        var value = this.inputText;
+                        localStorage.setItem(value, value);
+                        this.inputText = ''; 
+                        //저장하고 input 박스 비움
+                        this.todoItems.push(value);
+                    // }
+                    // $.ajax({
+                    //     type: 'POST'
+                    // })
+                    // axios.post('주소', this.inputText);
+                },
+                fetchItems: function(){
+                    // 할 일 데이터를 저장소에서 꺼내오기
+                    // axios.get('/todos')
+                    for (var i = 0; i < localStorage.length; i++) {
+                        var value = localStorage.key(i);
+                        console.log(value);
+                        this.todoItems.push(value);
+                    }
+                    // localstorage에 있던 데이터들 불러오기
+                }, 
+                removeItem: function(todoItem, index) {
+                    console.log(todoItem, index);
+                    this.todoItems.splice(index, 1);
+                    // 배열 지우기
+                    localStorage.removeItem(todoItem);
+                }
+            },
+            el: '#app',
+            data: {
+                inputText: '',
+                todoItems: []
+            }
+        })
+    </script>
+</body>
+</html>
